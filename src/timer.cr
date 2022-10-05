@@ -81,8 +81,8 @@ class Timer
   end
 
   # Execute the *block* *in* some time span.
-  def self.new(in : Time::Span, &block)
-    new(Time.utc_now + in, &block)
+  def self.new(span : Time::Span, &block)
+    new(Time.utc + span, &block)
   end
 
   # :nodoc:
@@ -138,7 +138,7 @@ class Timer
   protected def schedule(fiber_id = rand)
     spawn do
       loop do
-        sleep({Time::Span.zero, @at - Time.utc_now}.max)
+        sleep({Time::Span.zero, @at - Time.utc}.max)
 
         if @completed || @cancelled
           break
@@ -148,7 +148,7 @@ class Timer
           break
         end
 
-        if Time.utc_now < @at
+        if Time.utc < @at
           next
         end
 
